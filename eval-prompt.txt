@@ -1,0 +1,291 @@
+Add an AI Quality page to the OpsIQ Next.js UI.
+
+ROUTE: /quality
+SIDEBAR: Add nav item "AI Quality" with a sparkles or chart icon,
+         below About. Same styling as other nav items.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NEW API ENDPOINT needed in FastAPI (add to api/routes.py):
+
+GET /api/v1/ragas/latest
+  Query ragas_history table, return most recent run:
+  {
+    evaluated_at: string,
+    faithfulness: float,
+    answer_relevancy: float,
+    context_precision: float,
+    context_recall: float,
+    total_queries: int,
+    passed_queries: int,
+    alert_fired: bool,
+    run_label: string
+  }
+
+GET /api/v1/ragas/history
+  Query ragas_history last 30 runs, return array:
+  [{ evaluated_at, faithfulness, answer_relevancy,
+     context_precision, context_recall, alert_fired }]
+
+GET /api/v1/ragas/run
+  Trigger a fresh RAGAS evaluation (runs run_nightly_eval.py).
+  Returns: { status: "running" | "completed", message: str }
+  Run as background task — do not block the response.
+  Use FastAPI BackgroundTasks for this.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PAGE SECTIONS:
+
+─── SECTION 1: Page Header ───────────────────────────
+Title: "AI Quality Dashboard"
+Subtitle: "Real-time evaluation of retrieval accuracy
+           and answer quality across your knowledge base."
+
+Right side: "Run Evaluation" button
+  background: var(--accent-gradient)
+  color: white, border-radius: 8px
+  padding: 10px 20px, font-size: 14px
+  onClick: call GET /api/v1/ragas/run
+           show spinner while running
+           refresh scores on completion
+
+Last evaluated timestamp:
+  "Last evaluated: {evaluated_at} ago"
+  small text, #9CA3AF, below title
+
+─── SECTION 2: Score Cards (4 cards in a row) ─────────
+
+Fetch from GET /api/v1/ragas/latest
+
+Each metric gets one card:
+
+CARD STRUCTURE:
+  background: white
+  border: 1px solid #E5E7EB
+  border-radius: 16px
+  padding: 28px
+  position: relative
+
+  TOP: metric icon + name
+    icon: 32x32, gradient circle, white icon inside
+    name: 14px, #6B7280, uppercase, letter-spacing
+
+  MIDDLE: score display
+    Large number: 48px, Plus Jakarta Sans, bold
+    Color based on status:
+      PASS (above threshold): #10B981
+      WARN (within 5% of threshold): #F59E0B
+      FAIL (below threshold): #EF4444
+    Format as percentage: 0.87 → "87%"
+
+  BOTTOM: threshold indicator
+    "Target: > {threshold}%"
+    Progress bar showing score vs threshold:
+      Track: #F3F4F6, height 6px, border-radius 3px
+      Fill: same color as score (green/amber/red)
+      Width: (score / 1.0) * 100%
+    Status badge:
+      PASS: background #DCFCE7, color #166534, "✓ Pass"
+      WARN: background #FEF3C7, color #92400E, "⚠ Warning"
+      FAIL: background #FEE2E2, color #991B1B, "✗ Fail"
+
+FOUR METRIC CARDS:
+  1. Faithfulness
+     Icon: shield check (green gradient)
+     Threshold: 0.80
+     Tooltip: "Are answers grounded in
+               retrieved documents?"
+
+  2. Answer Relevancy
+     Icon: target (blue gradient)
+     Threshold: 0.85
+     Tooltip: "Do answers address
+               the question asked?"
+
+  3. Context Precision
+     Icon: funnel (violet gradient)
+     Threshold: 0.75
+     Tooltip: "Are retrieved chunks
+               actually relevant?"
+
+  4. Context Recall
+     Icon: magnifying glass (indigo gradient)
+     Threshold: 0.80
+     Tooltip: "Was all needed information
+               retrieved?"
+
+─── SECTION 3: Score Trend Chart ─────────────────────
+
+Fetch from GET /api/v1/ragas/history
+
+Title: "Quality Trends — Last 30 Evaluations"
+
+Line chart using recharts:
+  import { LineChart, Line, XAxis, YAxis, CartesianGrid,
+           Tooltip, Legend, ReferenceLine } from 'recharts'
+
+  X axis: evaluated_at formatted as "Jan 15" or "14:30"
+  Y axis: 0 to 1.0, formatted as percentages
+  Grid: subtle #F3F4F6 lines
+
+  4 lines:
+    Faithfulness:      color #10B981, strokeWidth 2
+    Answer Relevancy:  color #6366F1, strokeWidth 2
+    Context Precision: color #8B5CF6, strokeWidth 2
+    Context Recall:    color #F59E0B, strokeWidth 2
+
+  Reference lines (dashed) for thresholds:
+    y=0.80 for Faithfulness and Recall: color #10B981, dashed
+    y=0.85 for Answer Relevancy: color #6366F1, dashed
+    y=0.75 for Context Precision: color #8B5CF6, dashed
+
+  Custom tooltip showing all 4 scores on hover
+
+  Chart container:
+    background: white
+    border: 1px solid #E5E7EB
+    border-radius: 16px
+    padding: 24px
+
+─── SECTION 4: What These Metrics Mean ───────────────
+
+Title: "Understanding Your AI Quality Scores"
+
+2-column grid of explanation cards:
+  background: #F9FAFB
+  border-radius: 12px, padding: 20px
+
+Card 1 — Faithfulness:
+  Icon: 🛡️
+  Heading: "Faithfulness"
+  Body: "Measures whether every claim in the AI's answer
+         is supported by the retrieved documents.
+         A low score means the AI is adding information
+         not found in your knowledge base — hallucinating."
+  Example: "Score 0.87 means 87% of answer statements
+            are directly traceable to source documents."
+
+Card 2 — Answer Relevancy:
+  Icon: 🎯
+  Heading: "Answer Relevancy"
+  Body: "Measures whether the answer actually addresses
+         the question that was asked. A low score means
+         the AI gives technically accurate but off-topic
+         responses."
+  Example: "Score 0.91 means answers are highly focused
+            on what was actually asked."
+
+Card 3 — Context Precision:
+  Icon: 🔍
+  Heading: "Context Precision"
+  Body: "Measures what proportion of retrieved document
+         chunks were actually useful for answering.
+         A low score means retrieval is returning
+         too much irrelevant content."
+  Example: "Score 0.76 means 76% of retrieved chunks
+            contributed to the answer."
+
+Card 4 — Context Recall:
+  Icon: 📚
+  Heading: "Context Recall"
+  Body: "Measures whether retrieval found ALL the
+         information needed to answer completely.
+         A low score means important context was missed."
+  Example: "Score 0.82 means 82% of required information
+            was successfully retrieved."
+
+─── SECTION 5: Evaluation History Table ──────────────
+
+Title: "Evaluation History"
+
+Table showing last 10 runs:
+  Columns: Date | Faithfulness | Relevancy |
+           Precision | Recall | Status | Alert
+
+  Row styling:
+    Alert fired row: background #FFF7ED (amber tint)
+    All pass row: background white
+    Date: formatted nicely "Jan 15, 2025 2:00 AM"
+    Scores: colored green/amber/red based on threshold
+    Status badge: "All Pass" (green) or "X Failed" (red)
+    Alert: 🔔 if alert_fired else —
+
+  background: white
+  border: 1px solid #E5E7EB
+  border-radius: 16px
+  overflow: hidden
+
+─── SECTION 6: Empty State ────────────────────────────
+
+Show when no evaluation data exists yet
+(ragas/latest returns null or 404):
+
+  Center of page
+  Icon: 📊 large, 64px
+  Heading: "No Evaluations Yet"
+  Body: "Run your first evaluation to see how well
+         OpsIQ is performing on your knowledge base."
+  Button: "Run First Evaluation"
+    Same styling as header button
+    onClick: trigger GET /api/v1/ragas/run
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LOADING STATES:
+  Score cards: show skeleton loaders while fetching
+    Animated pulse grey blocks where numbers will appear
+
+  Chart: show "Loading evaluation history..." centered
+         with spinner
+
+  Run Evaluation button while running:
+    Disabled, shows spinner + "Running evaluation..."
+    Poll GET /api/v1/ragas/latest every 5 seconds
+    When evaluated_at changes: refresh all data
+    Show success toast: "Evaluation complete"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STATE MANAGEMENT:
+  useQuality hook:
+    const { latest, history, isLoading,
+            isRunning, runEvaluation } = useQuality()
+
+    latest:        from GET /api/v1/ragas/latest
+    history:       from GET /api/v1/ragas/history
+    isLoading:     true while fetching
+    isRunning:     true after clicking run button
+    runEvaluation: calls GET /api/v1/ragas/run,
+                   sets isRunning=true,
+                   polls every 5s until new result appears
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+THRESHOLD CONSTANTS (define at top of file):
+  const THRESHOLDS = {
+    faithfulness:      0.80,
+    answer_relevancy:  0.85,
+    context_precision: 0.75,
+    context_recall:    0.80,
+  }
+
+  function getStatus(score, threshold) {
+    if (score >= threshold)           return 'pass'
+    if (score >= threshold - 0.05)    return 'warn'
+    return 'fail'
+  }
+
+  function getColor(status) {
+    return { pass:'#10B981', warn:'#F59E0B', fail:'#EF4444' }[status]
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PACKAGES NEEDED:
+  recharts   (already in package.json from Phase 4)
+
+DO NOT CHANGE:
+  Any existing pages, components, or API connections.
+  Only add /quality route, sidebar item, and 2 new
+  FastAPI endpoints.

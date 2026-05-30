@@ -1,0 +1,305 @@
+Redesign the OpsIQ UI with a modern, premium B2B SaaS aesthetic.
+Keep ALL existing functionality and API connections unchanged.
+Only change visual styling, layout polish, and component design.
+
+DESIGN DIRECTION: "Linear + Vercel inspired"
+  Dark sidebar, clean white main area, subtle gradients,
+  sharp typography, micro-animations on interactions.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COLOR SYSTEM (CSS variables in globals.css):
+  --bg-sidebar:       #0A0A0F      (near black)
+  --bg-main:          #FAFAFA      (off white)
+  --bg-card:          #FFFFFF
+  --bg-card-hover:    #F5F5F7
+  --accent-primary:   #6366F1      (indigo)
+  --accent-secondary: #8B5CF6      (violet)
+  --accent-gradient:  linear-gradient(135deg, #6366F1, #8B5CF6)
+  --text-primary:     #0A0A0F
+  --text-secondary:   #6B7280
+  --text-sidebar:     #E5E7EB
+  --text-muted:       #9CA3AF
+  --border:           #E5E7EB
+  --border-subtle:    #F3F4F6
+  --shadow-sm:        0 1px 3px rgba(0,0,0,0.06)
+  --shadow-md:        0 4px 16px rgba(0,0,0,0.08)
+  --shadow-lg:        0 8px 32px rgba(99,102,241,0.15)
+
+FONT:
+  Import from Google Fonts:
+  - "Geist" or "Plus Jakarta Sans" for headings
+  - "Inter" for body text
+  --font-display: 'Plus Jakarta Sans', sans-serif
+  --font-body:    'Inter', sans-serif
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SIDEBAR REDESIGN (left panel, 260px):
+  Background: var(--bg-sidebar)
+  No border — use shadow instead
+
+  Logo area (top 64px):
+    "OpsIQ" in Plus Jakarta Sans, 18px, bold, white
+    Gradient dot before the O: background var(--accent-gradient)
+    Subtitle "AI Operations Hub" in 11px, #6B7280
+
+  Navigation items (Chat, Knowledge Base, Sessions):
+    Icon + label, 13px, #9CA3AF
+    Active: background #1A1A2E, text white, left border 2px var(--accent-primary)
+    Hover: background #111118, text #E5E7EB
+    Border radius: 8px, padding: 10px 12px
+
+  AGENTS section label:
+    "AGENTS" in 10px, letter-spacing 0.1em, #4B5563, uppercase
+
+  Agent cards (each agent item):
+    CURRENT: plain list items
+    REDESIGN TO:
+      background: transparent
+      border-radius: 10px
+      padding: 10px 12px
+      gap: 10px between icon and text
+
+      Icon container: 32x32px, border-radius 8px
+        Each agent gets unique gradient background:
+        Internal:   linear-gradient(135deg, #6366F1, #818CF8)
+        Support:    linear-gradient(135deg, #10B981, #34D399)
+        Report:     linear-gradient(135deg, #F59E0B, #FCD34D)
+        Onboarding: linear-gradient(135deg, #EC4899, #F472B6)
+        Contract:   linear-gradient(135deg, #EF4444, #F87171)
+        Icon inside: white, 16px
+
+      Agent name: 13px, semibold, #E5E7EB
+      Description: 11px, #6B7280, truncate at 1 line
+
+      ACTIVE state:
+        background: #1A1A2E
+        border: 1px solid rgba(99,102,241,0.3)
+        box-shadow: 0 0 0 1px rgba(99,102,241,0.1) inset
+        Agent name: white
+        Description: #9CA3AF
+
+      HOVER: background #111118, transition 150ms ease
+
+  File upload area (bottom of sidebar):
+    background: #111118
+    border: 1px dashed #2D2D3A
+    border-radius: 12px
+    padding: 16px
+    "Drag & drop or browse" in 12px, #6B7280
+    On hover: border-color var(--accent-primary), background #0F0F1A
+
+    Department + DocType selects:
+      background: #111118
+      border: 1px solid #2D2D3A
+      color: #E5E7EB
+      border-radius: 8px
+      font-size: 13px
+      height: 36px
+
+    Upload button:
+      background: var(--accent-gradient)
+      color: white
+      border: none
+      border-radius: 8px
+      height: 38px
+      font-size: 13px
+      font-weight: 600
+      width: 100%
+      cursor: pointer
+      transition: opacity 150ms ease, transform 100ms ease
+      hover: opacity 0.9, transform translateY(-1px)
+      active: transform translateY(0)
+
+  Backend URL badge (very bottom):
+    "● localhost:8000" in 11px, #4B5563
+    ● dot: #10B981 (green, pulsing animation for live indicator)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MAIN AREA REDESIGN:
+
+  Header bar (64px, border-bottom 1px var(--border)):
+    Left: Agent name in 16px, semibold, Plus Jakarta Sans
+          Session ID pill: background #F3F4F6, 11px, #9CA3AF,
+          border-radius 20px, padding 2px 8px
+    Right: "New Session" button:
+           background white, border 1px var(--border),
+           border-radius 8px, 13px, #6B7280
+           hover: background #F9FAFB, border-color #D1D5DB
+
+  Empty state (when no messages):
+    CURRENT: plain centered text
+    REDESIGN:
+      Center of screen
+      OpsIQ logo mark: 48x48px gradient circle with white icon
+      Heading: "OpsIQ AI Operations Hub"
+               24px, Plus Jakarta Sans, semibold, #0A0A0F
+      Subtitle: 14px, #6B7280, max-width 380px, centered
+
+      Suggestion chips row (3 chips):
+        "What's our leave policy?"
+        "Summarize vendor contracts"
+        "Generate weekly report"
+
+        Each chip:
+          background: white
+          border: 1px solid var(--border)
+          border-radius: 20px
+          padding: 8px 16px
+          font-size: 13px, #374151
+          cursor: pointer
+          hover: background #F9FAFB, border-color #6366F1, color #6366F1
+          transition: all 150ms ease
+          On click: populate input and send
+
+  Chat messages area:
+    max-width: 780px, centered, padding: 24px
+
+    USER message bubble:
+      background: var(--accent-gradient)
+      color: white
+      border-radius: 18px 18px 4px 18px
+      padding: 12px 16px
+      font-size: 14px
+      max-width: 70%
+      align: right
+      box-shadow: var(--shadow-lg)
+
+    AGENT message bubble:
+      background: white
+      border: 1px solid var(--border-subtle)
+      border-radius: 18px 18px 18px 4px
+      padding: 16px 20px
+      font-size: 14px
+      line-height: 1.6
+      max-width: 75%
+      box-shadow: var(--shadow-sm)
+
+      Agent label above bubble:
+        Agent icon (tiny 20px gradient circle) + agent name
+        11px, #9CA3AF, margin-bottom 4px
+
+    SOURCE CITATIONS (below agent message):
+      Collapsible row: "3 sources" toggle
+      When expanded: horizontal pills
+        Each pill: filename + page number
+        background: #F3F4F6, border-radius 6px,
+        padding 4px 10px, 11px, #6B7280
+        hover: background #EEF2FF, color #6366F1
+
+    TYPING INDICATOR (while waiting):
+      3 dots animation inside agent bubble
+      dots: #6366F1, staggered bounce animation
+
+  Input bar (bottom, 72px, border-top 1px var(--border)):
+    Container: max-width 780px, centered
+    Input field:
+      background: white
+      border: 1.5px solid var(--border)
+      border-radius: 12px
+      padding: 14px 50px 14px 16px
+      font-size: 14px
+      width: 100%
+      focus: border-color var(--accent-primary),
+             box-shadow: 0 0 0 3px rgba(99,102,241,0.1)
+      placeholder color: #9CA3AF
+    Send button (inside input, right):
+      32x32px circle
+      background: var(--accent-gradient)
+      border: none
+      border-radius: 8px
+      icon: white arrow, 16px
+      disabled: opacity 0.4
+      hover: transform scale(1.05)
+      transition: all 150ms ease
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+APPROVAL PANEL (for Report + Contract agents):
+  background: white
+  border: 1px solid #E0E7FF
+  border-radius: 16px
+  padding: 24px
+  box-shadow: var(--shadow-md)
+  margin: 16px 0
+
+  Header:
+    Yellow/amber badge: "⏳ Awaiting Approval"
+    background: #FEF3C7, color: #92400E
+    border-radius: 20px, padding: 4px 12px, 12px
+
+  Draft content area:
+    background: #F9FAFB
+    border-radius: 12px
+    padding: 20px
+    font-size: 14px, line-height 1.7
+    max-height: 400px, overflow-y: auto
+
+  Action row:
+    "✅ Approve & Finalize" button:
+      background: linear-gradient(135deg, #10B981, #34D399)
+      color: white, border-radius: 8px, padding: 10px 20px
+      font-weight: 600, font-size 14px
+
+    Revision textarea:
+      border: 1px solid var(--border), border-radius: 8px
+      padding: 10px, font-size 13px, resize: vertical
+
+    "✏️ Request Revision" button:
+      background: white, border: 1px solid var(--border)
+      color: #374151, border-radius: 8px
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANIMATIONS (add to globals.css):
+
+  Page load — stagger agent cards:
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  Each agent card: animation slideInLeft 200ms ease forwards
+  Delay: nth-child × 60ms
+
+  Live indicator pulse:
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+  .live-dot { animation: pulse 2s ease infinite; }
+
+  Typing dots:
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40%           { transform: translateY(-6px); }
+  }
+
+  Message appear:
+  @keyframes messageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  New messages: animation messageIn 200ms ease
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DO NOT CHANGE:
+  - Any API calls or endpoint URLs
+  - Component logic or state management
+  - Agent switching functionality
+  - File upload logic
+  - Approval panel submit handlers
+  - Session ID generation
+  - Any TypeScript types or interfaces
+
+ONLY CHANGE:
+  - CSS classes and styling
+  - Color values
+  - Font sizes and weights
+  - Border radius values
+  - Shadow definitions
+  - Animation definitions
+  - Layout spacing and padding
+  - Icon sizes and colors
