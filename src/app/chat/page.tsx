@@ -48,7 +48,7 @@ export default function ChatPage() {
     setApprovalDraft(null);
     if (result) {
       const content =
-        result.response ?? result.message ?? (approved ? "Approved." : "Revision requested.");
+        result.answer ?? result.response ?? result.message ?? (approved ? "Approved." : "Revision requested.");
       addAssistantMessage(content, result.sources);
     }
   };

@@ -57,7 +57,8 @@ export function useChat({
           return;
         }
 
-        const content = data.response ?? data.message ?? "No response received.";
+        const content =
+          data.answer ?? data.response ?? data.message ?? "No response received.";
         const assistantMessage: ChatMessage = {
           id: createId(),
           role: "assistant",

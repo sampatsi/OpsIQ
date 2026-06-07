@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/pre-commit-check.sh",
+        "matcher": "git commit",
+        "failClosed": false
+      }
+    ]
+  }
+}

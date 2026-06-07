@@ -1,9 +1,7 @@
 import type { ChatResponse, SessionDetail, StatsResponse } from "@/types";
 import type {
-  RagasEvaluateResponse,
   RagasHistoryEntry,
   RagasLatest,
-  RagasStatus,
   RagasThresholds,
 } from "@/types/ragas";
 
@@ -33,6 +31,18 @@ async function handleResponse<T>(res: Response): Promise<T> {
 export async function checkHealth(): Promise<{ status: string }> {
   const res = await fetch(`${API_BASE}/health`);
   return handleResponse(res);
+}
+
+export async function getApiFailureHint(): Promise<string> {
+  try {
+    const res = await fetch(`${API_BASE}/health`);
+    if (res.ok) {
+      return "The API is running, but PostgreSQL is unavailable. Start Docker Desktop, then run: cd opsiq/docker && docker compose up -d pgvector";
+    }
+  } catch {
+    // backend unreachable
+  }
+  return "Ensure the FastAPI backend is running at http://localhost:8000";
 }
 
 export async function sendChat(payload: {
@@ -94,33 +104,34 @@ export async function getSession(sessionId: string): Promise<SessionDetail> {
   return handleResponse(res);
 }
 
-export async function getRagasThresholds(): Promise<RagasThresholds> {
-  const res = await fetch(`${API_BASE}/ragas/thresholds`);
-  return handleResponse(res);
+export async function getRagasThresholds(): Promise<RagasThresholds | null> {
+  try {
+    const res = await fetch(`${API_BASE}/ragas/thresholds`);
+    if (!res.ok) return null;
+    return res.json() as Promise<RagasThresholds>;
+  } catch {
+    return null;
+  }
 }
 
 export async function getRagasLatest(): Promise<RagasLatest | null> {
-  const res = await fetch(`${API_BASE}/ragas/latest`);
-  if (res.status === 404) return null;
-  return handleResponse(res);
+  try {
+    const res = await fetch(`${API_BASE}/ragas/latest`);
+    if (!res.ok) return null;
+    return res.json() as Promise<RagasLatest>;
+  } catch {
+    return null;
+  }
 }
 
 export async function getRagasHistory(limit = 30): Promise<RagasHistoryEntry[]> {
-  const res = await fetch(`${API_BASE}/ragas/history?limit=${Math.min(Math.max(limit, 1), 100)}`);
-  if (res.status === 404) return [];
-  return handleResponse(res);
-}
-
-export async function getRagasStatus(): Promise<RagasStatus> {
-  const res = await fetch(`${API_BASE}/ragas/status`);
-  return handleResponse(res);
-}
-
-export async function runRagasEvaluation(): Promise<RagasEvaluateResponse> {
-  const res = await fetch(`${API_BASE}/ragas/evaluate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ async: true, run_label: "manual" }),
-  });
-  return handleResponse(res);
+  try {
+    const res = await fetch(
+      `${API_BASE}/ragas/history?limit=${Math.min(Math.max(limit, 1), 100)}`
+    );
+    if (!res.ok) return [];
+    return res.json() as Promise<RagasHistoryEntry[]>;
+  } catch {
+    return [];
+  }
 }

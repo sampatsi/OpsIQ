@@ -26,20 +26,6 @@ export default function SessionsPage() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSessions = useCallback(async () => {
-    setLoadingList(true);
-    setError(null);
-    try {
-      const data = await listSessions();
-      setSessions(data.sessions ?? []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load sessions");
-      setSessions([]);
-    } finally {
-      setLoadingList(false);
-    }
-  }, []);
-
   const loadSessionDetail = useCallback(async (id: string) => {
     setSelectedId(id);
     setLoadingDetail(true);
@@ -55,8 +41,26 @@ export default function SessionsPage() {
   }, []);
 
   useEffect(() => {
-    loadSessions();
-  }, [loadSessions]);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const data = await listSessions();
+        if (!cancelled) setSessions(data.sessions ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load sessions");
+          setSessions([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingList(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const messages: ChatMessage[] =
     detail?.messages?.map((m, i) => ({

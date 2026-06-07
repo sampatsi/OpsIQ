@@ -41,7 +41,7 @@ export function QualityTrendChart({ history, thresholds, isLoading }: QualityTre
       <div className="flex h-80 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white">
         <div className="flex items-center gap-2 text-[#6B7280]">
           <Loader2 className="h-5 w-5 animate-spin text-[var(--accent-primary)]" />
-          Loading evaluation history...
+          Loading chart…
         </div>
       </div>
     );
@@ -50,7 +50,7 @@ export function QualityTrendChart({ history, thresholds, isLoading }: QualityTre
   if (chartData.length === 0) {
     return (
       <div className="flex h-80 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white text-sm text-[#6B7280]">
-        No trend data yet. Run an evaluation to see history.
+        No saved evaluation history yet. Scores appear here after a backend evaluation completes.
       </div>
     );
   }

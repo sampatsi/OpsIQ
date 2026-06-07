@@ -11,31 +11,55 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { getStats } from "@/lib/api";
+import { getApiFailureHint, getStats } from "@/lib/api";
 import type { StatsResponse } from "@/types";
 
 export default function KnowledgeBasePage() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorHint, setErrorHint] = useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
+
+  const reportError = useCallback(async (message: string) => {
+    setError(message);
+    setErrorHint(await getApiFailureHint());
+  }, []);
 
   const loadStats = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setErrorHint(null);
     try {
       const data = await getStats();
       setStats(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load stats");
+      await reportError(err instanceof Error ? err.message : "Failed to load stats");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [reportError]);
 
   useEffect(() => {
-    loadStats();
-  }, [loadStats]);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const data = await getStats();
+        if (!cancelled) setStats(data);
+      } catch (err) {
+        if (!cancelled) {
+          await reportError(err instanceof Error ? err.message : "Failed to load stats");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reportError]);
 
   const departments = stats?.documents_by_department
     ? Object.entries(stats.documents_by_department).sort((a, b) => b[1] - a[1])
@@ -80,9 +104,7 @@ export default function KnowledgeBasePage() {
         {error && (
           <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {error}
-            <p className="mt-1 text-xs">
-              Ensure the FastAPI backend is running at http://localhost:8000
-            </p>
+            {errorHint && <p className="mt-1 text-xs">{errorHint}</p>}
           </div>
         )}
 

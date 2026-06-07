@@ -30,6 +30,7 @@ export interface SourceCitation {
 }
 
 export interface ChatResponse {
+  answer?: string;
   response?: string;
   message?: string;
   status?: string;

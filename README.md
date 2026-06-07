@@ -12,14 +12,14 @@ OpsIQ helps teams upload operational documents (policies, SOPs, contracts, repor
 - Upload documents to the knowledge base with department and document type tags
 - View ingestion stats and documents by department
 - Browse past agent sessions and conversation history
-- Monitor RAGAS retrieval/answer quality scores and run evaluations
+- Monitor RAGAS retrieval/answer quality scores (read-only dashboard)
 - Learn about the product on the About page
 
 ## Tech stack
 
 | Layer | Technology |
 |-------|------------|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Components | shadcn/ui-style (Radix primitives) |
@@ -36,7 +36,7 @@ OpsIQ helps teams upload operational documents (policies, SOPs, contracts, repor
 | `/knowledge-base` | Total documents/chunks, department breakdown, upload modal |
 | `/sessions` | List sessions and view conversation history |
 | `/about` | Product overview, agents, features, benefits, tech stack |
-| `/quality` | RAGAS AI quality dashboard — scores, trends, history, run evaluation |
+| `/quality` | RAGAS AI quality dashboard — scores, trends, and history (read-only) |
 
 ## Prerequisites
 
@@ -106,7 +106,7 @@ The UI expects these endpoint groups under `http://localhost:8000/api/v1`:
 | Health | `GET /health` |
 | Ingestion | `POST /ingest`, `GET /stats` |
 | Chat / agents | `POST /agent/chat`, `POST /agent/report/approve`, `GET /agent/sessions`, `GET /agent/sessions/:id` |
-| RAGAS quality | `GET /ragas/thresholds`, `GET /ragas/latest`, `GET /ragas/history?limit=30`, `GET /ragas/status`, `POST /ragas/evaluate` |
+| RAGAS quality | `GET /ragas/thresholds`, `GET /ragas/latest`, `GET /ragas/history?limit=30` |
 
 RAGAS base path: `http://localhost:8000/api/v1/ragas`
 

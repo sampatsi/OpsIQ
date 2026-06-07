@@ -23,7 +23,13 @@ export function mergeThresholds(api?: RagasThresholds | null): RagasThresholds {
 
 export type QualityStatus = "pass" | "warn" | "fail";
 
-export function getStatus(score: number, threshold: number): QualityStatus {
+export function formatScorePercent(score: number | null | undefined): string {
+  if (score == null || Number.isNaN(score)) return "—";
+  return `${Math.round(score * 100)}%`;
+}
+
+export function getStatus(score: number | null | undefined, threshold: number): QualityStatus {
+  if (score == null || Number.isNaN(score)) return "fail";
   if (score >= threshold) return "pass";
   if (score >= threshold - 0.05) return "warn";
   return "fail";
@@ -31,10 +37,6 @@ export function getStatus(score: number, threshold: number): QualityStatus {
 
 export function getColor(status: QualityStatus): string {
   return { pass: "#10B981", warn: "#F59E0B", fail: "#EF4444" }[status];
-}
-
-export function formatScorePercent(score: number): string {
-  return `${Math.round(score * 100)}%`;
 }
 
 export function formatThresholdPercent(threshold: number): string {
