@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="96" height="96">
+  <defs>
+    <linearGradient id="opsiqRing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3FB9AB"></stop>
+      <stop offset="1" stop-color="#0E8C7F"></stop>
+    </linearGradient>
+    <radialGradient id="opsiqCore" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#4FD6C6"></stop>
+      <stop offset="1" stop-color="#0E8C7F"></stop>
+    </radialGradient>
+  </defs>
+  <circle cx="70" cy="70" r="62.5" fill="none" stroke="url(#opsiqRing)" stroke-width="6"></circle>
+  <circle cx="70" cy="7.5" r="8.5" fill="#3FB9AB"></circle>
+  <circle cx="70" cy="70" r="15" fill="url(#opsiqCore)"></circle>
+</svg>

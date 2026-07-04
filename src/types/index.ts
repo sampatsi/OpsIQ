@@ -9,7 +9,46 @@ export interface AgentConfig {
   id: AgentId;
   name: string;
   description: string;
+  tagline: string;
   icon: string;
+  gated?: boolean;
+  chunkCount?: number;
+  sourceDomains?: string[];
+}
+
+export interface GuardrailBlock {
+  reason: string;
+  restrictedFields?: string[];
+  auditId?: string;
+  message?: string;
+}
+
+export interface RagasMetrics {
+  faithfulness: number;
+  answer_relevancy: number;
+  context_precision: number;
+  context_recall: number;
+}
+
+export interface AgentQueryResponse {
+  status: "passed" | "held_for_review" | "blocked";
+  answer?: string | null;
+  citations?: SourceCitation[];
+  ragas?: RagasMetrics;
+  guardrail?: GuardrailBlock;
+  sessionId: string;
+  agentId: string;
+  durationMs?: number;
+}
+
+export interface LiveQualityMetrics {
+  window: number;
+  sampleCount: number;
+  faithfulness?: number | null;
+  answerRelevancy?: number | null;
+  contextPrecision?: number | null;
+  contextRecall?: number | null;
+  faithfulnessThreshold: number;
 }
 
 export interface ChatMessage {
@@ -19,6 +58,17 @@ export interface ChatMessage {
   agentName?: string;
   sources?: SourceCitation[];
   timestamp: Date;
+  grounding?: {
+    faithfulness?: number;
+    sources_used?: number;
+  };
+  guardrail?: {
+    status: "passed" | "blocked" | "held";
+    reason_code?: string;
+    message?: string;
+    audit_id?: string;
+    restricted_fields?: string[];
+  };
 }
 
 export interface SourceCitation {
@@ -27,17 +77,39 @@ export interface SourceCitation {
   department?: string;
   snippet?: string;
   score?: number;
+  page_number?: number;
+}
+
+export interface GuardrailInfo {
+  status: "passed" | "blocked" | "held";
+  reason_code?: string;
+  message?: string;
+  audit_id?: string;
+  restricted_fields?: string[];
+}
+
+export interface GroundingInfo {
+  faithfulness?: number;
+  sources_used?: number;
 }
 
 export interface ChatResponse {
   answer?: string;
-  response?: string;
-  message?: string;
+  agent_used?: string;
   status?: string;
   session_id?: string;
   thread_id?: string;
   draft?: string;
   sources?: SourceCitation[];
+  guardrail?: GuardrailInfo;
+  grounding?: GroundingInfo;
+  guardrail_blocked?: boolean;
+}
+
+export interface SessionCreateResponse {
+  session_id: string;
+  agent_type: string;
+  thread_id: string;
 }
 
 export interface ApprovalState {
@@ -90,3 +162,97 @@ export const DOC_TYPES = [
   "faq",
   "other",
 ] as const;
+
+export const FAITHFULNESS_GATE = 0.7;
+
+export interface GuardrailConfigStatus {
+  active: boolean;
+  label: string;
+  enabledCount: number;
+  piiDetection: boolean;
+  injectionFilter: boolean;
+  scopeEnforcement: boolean;
+  faithfulnessGate: boolean;
+  nemoEnabled: boolean;
+  confidenceThreshold: number;
+  citationRequired: boolean;
+  retryOnLowConfidence: boolean;
+  maxQueryChars: number;
+  chatRateLimit: string;
+}
+
+export interface ChunkingConfig {
+  strategy: string;
+  strategyLabel: string;
+  chunkSize: number;
+  overlap: number;
+  minChunkSize: number;
+  metadataInjection: boolean;
+}
+
+export interface RetrievalConfig {
+  algorithm: string;
+  algorithmLabel: string;
+  topK: number;
+  rerankEnabled: boolean;
+  rerankModel: string;
+  queryDecomposition: boolean;
+  hydeEnabled: boolean;
+  semanticWeight: number;
+  bm25Weight: number;
+  candidates: number;
+  minScore: number;
+}
+
+export interface ModelsConfig {
+  llmProvider: string;
+  llmModel: string;
+  embeddingModel: string;
+  embeddingDimensions: number;
+  maxContextTokens: number;
+  temperature: number;
+  selfLearningEnabled: boolean;
+}
+
+export interface PlatformConfig {
+  guardrails: GuardrailConfigStatus;
+  chunking: ChunkingConfig;
+  retrieval: RetrievalConfig;
+  models: ModelsConfig;
+}
+
+export interface AnalyticsBarItem {
+  label: string;
+  value: number;
+  percent: number;
+  display: string;
+}
+
+export interface AnalyticsQualityRing {
+  label: string;
+  score: number;
+  percent: number;
+}
+
+export interface AnalyticsRecentQuery {
+  query: string;
+  agentId: string;
+  agentName: string;
+  confidence?: number | null;
+  chunks?: number | null;
+  status: string;
+  durationMs?: number | null;
+  recordedAt?: string | null;
+}
+
+export interface AnalyticsDashboard {
+  queryVolumeByAgent: AnalyticsBarItem[];
+  qualityScores: AnalyticsQualityRing[];
+  knowledgeCoverageByDomain: AnalyticsBarItem[];
+  systemPerformance: AnalyticsBarItem[];
+  recentQueries: AnalyticsRecentQuery[];
+  summary: {
+    totalQueries: number;
+    faithfulnessThreshold: number;
+  };
+}

@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { Clock, MessageSquare, Loader2 } from "lucide-react";
 import { getSession, listSessions } from "@/lib/api";
-import type { SessionDetail } from "@/types";
+import type { ChatMessage, SessionDetail } from "@/types";
 import { MessageBubble } from "@/components/MessageBubble";
-import type { ChatMessage } from "@/types";
+import { PageHeader } from "@/components/PageHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
@@ -73,20 +73,23 @@ export default function SessionsPage() {
     })) ?? [];
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col md:h-screen md:flex-row">
-      <aside className="w-full shrink-0 border-b border-[var(--border)] bg-white md:w-[320px] md:border-b-0 md:border-r">
-        <div className="border-b border-[var(--border-subtle)] px-6 py-5">
-          <h1 className="font-display text-lg font-bold text-[var(--text-primary)]">Sessions</h1>
-          <p className="text-xs text-[var(--text-secondary)]">Recent agent conversations</p>
-        </div>
-        <ScrollArea className="h-[200px] md:h-[calc(100%-73px)]">
+    <div className="console-page flex min-h-0 flex-1 flex-col overflow-hidden">
+      <PageHeader
+        icon={Clock}
+        title="Sessions"
+        description="Browse and replay past agent conversations across all agents."
+      />
+
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      <aside className="flex w-full shrink-0 flex-col border-b border-[var(--line)] bg-[var(--card)] md:w-[320px] md:border-b-0 md:border-r">
+        <ScrollArea className="h-[200px] min-h-0 flex-1 md:h-auto">
           {loadingList ? (
-            <div className="flex items-center justify-center gap-2 p-8 text-[var(--text-muted)]">
-              <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)]" />
+            <div className="flex items-center justify-center gap-2 p-8 text-[var(--text-2)]">
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--teal)]" />
               Loading...
             </div>
           ) : sessions.length === 0 ? (
-            <p className="p-6 text-center text-sm text-[var(--text-muted)]">
+            <p className="p-6 text-center text-sm text-[var(--text-2)]">
               No sessions found. Start a chat to create one.
             </p>
           ) : (
@@ -97,24 +100,22 @@ export default function SessionsPage() {
                     type="button"
                     onClick={() => loadSessionDetail(s.session_id)}
                     className={cn(
-                      "flex w-full flex-col gap-1 border-b border-[var(--border-subtle)] px-6 py-3 text-left transition-colors hover:bg-[var(--bg-card-hover)]",
+                      "flex w-full flex-col gap-1 border-b border-[var(--line)] px-6 py-3 text-left transition-colors hover:bg-[var(--bg-card-hover)]",
                       selectedId === s.session_id &&
-                        "border-l-2 border-l-[var(--accent-primary)] bg-[#EEF2FF]/50"
+                        "border-l-2 border-l-[var(--teal)] bg-[var(--teal-bg)]/40 shadow-[inset_2px_0_0_var(--teal)]"
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                      <span className="truncate text-sm font-medium text-[var(--text-primary)]">
+                      <MessageSquare className="h-3.5 w-3.5 text-[var(--teal)]" />
+                      <span className="truncate text-sm font-medium text-[var(--text)]">
                         {s.agent ? `${s.agent} · ` : ""}
                         {s.session_id.slice(0, 16)}...
                       </span>
                     </div>
                     {s.preview && (
-                      <p className="line-clamp-2 text-xs text-[var(--text-secondary)]">
-                        {s.preview}
-                      </p>
+                      <p className="line-clamp-2 text-xs text-[var(--text-2)]">{s.preview}</p>
                     )}
-                    <div className="flex items-center gap-3 text-[10px] text-[var(--text-muted)]">
+                    <div className="flex items-center gap-3 font-mono text-[10px] text-[var(--text-2)]">
                       {s.message_count != null && <span>{s.message_count} messages</span>}
                       {s.updated_at && (
                         <span className="flex items-center gap-0.5">
@@ -131,28 +132,42 @@ export default function SessionsPage() {
         </ScrollArea>
       </aside>
 
-      <div className="flex min-h-0 flex-1 flex-col bg-[var(--bg-main)]">
+      <div className="flex min-h-0 flex-1 flex-col bg-[var(--paper)]">
         {!selectedId ? (
-          <div className="flex flex-1 items-center justify-center text-[var(--text-muted)]">
+          <div className="flex flex-1 items-center justify-center text-[var(--text-2)]">
             Select a session to view conversation history
           </div>
         ) : loadingDetail ? (
-          <div className="flex flex-1 items-center justify-center gap-2 text-[var(--text-muted)]">
-            <Loader2 className="h-5 w-5 animate-spin text-[var(--accent-primary)]" />
+          <div className="flex flex-1 items-center justify-center gap-2 text-[var(--text-2)]">
+            <Loader2 className="h-5 w-5 animate-spin text-[var(--teal)]" />
             Loading conversation...
           </div>
         ) : (
           <>
-            <header className="border-b border-[var(--border)] bg-white px-6 py-4">
-              <h2 className="font-display font-semibold text-[var(--text-primary)]">
-                Conversation
-              </h2>
-              <p className="font-mono text-xs text-[var(--text-muted)]">{selectedId}</p>
+            <header
+              className="relative flex shrink-0 items-center gap-3 border-b border-[var(--line)] bg-[var(--card)] px-6 py-3"
+              style={
+                {
+                  "--header-accent": "var(--teal)",
+                  "--header-wash": "#1a3d38",
+                } as React.CSSProperties
+              }
+            >
+              <div
+                className="pointer-events-none absolute inset-y-0 left-0 w-1 rounded-r-sm bg-[var(--teal)]"
+                aria-hidden
+              />
+              <div className="min-w-0 flex-1 pl-0.5">
+                <h2 className="font-display text-[1.05rem] font-semibold tracking-[-0.01em] text-[var(--text)]">
+                  Conversation
+                </h2>
+                <p className="truncate font-mono text-[0.64rem] text-[var(--text-2)]">{selectedId}</p>
+              </div>
             </header>
             <ScrollArea className="flex-1">
               <div className="mx-auto flex max-w-[780px] flex-col gap-5 p-6">
                 {messages.length === 0 ? (
-                  <p className="py-12 text-center text-sm text-[var(--text-muted)]">
+                  <p className="py-12 text-center text-sm text-[var(--text-2)]">
                     No messages in this session.
                   </p>
                 ) : (
@@ -164,10 +179,11 @@ export default function SessionsPage() {
         )}
 
         {error && (
-          <p className="border-t border-red-100 bg-red-50 px-6 py-2 text-sm text-red-600">
+          <p className="border-t border-[var(--red-bg)] bg-[var(--red-bg)] px-6 py-2 text-sm text-[var(--red)]">
             {error}
           </p>
         )}
+      </div>
       </div>
     </div>
   );

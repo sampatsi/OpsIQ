@@ -1,0 +1,58 @@
+Build a Next.js 14 frontend for OpsIQ — an AI Operations Hub.
+
+BACKEND: FastAPI running at http://localhost:8000/api/v1
+STACK: Next.js 14 App Router, Tailwind CSS, shadcn/ui
+
+PAGES TO BUILD:
+
+1. /chat
+   - Left sidebar: 5 agent cards (Internal, Support, Report,
+     Onboarding, Contract) — clicking switches active agent
+   - Left sidebar bottom: file upload panel with department
+     and doc_type dropdowns → calls POST /ingest
+   - Main area: chat window with message history
+   - Input bar: text input + send button
+   - On send: calls POST /agent/chat with selected agent in context
+   - If response has status="awaiting_approval":
+     show ApprovalPanel component instead of normal message
+
+2. /knowledge-base
+   - Stats cards: total documents, total chunks
+   - Table: documents by department (from GET /stats)
+   - Upload button → opens upload modal
+
+3. /sessions
+   - List of recent agent sessions from GET /agent/sessions/:id
+   - Click session → shows conversation history
+
+COMPONENTS:
+   AgentSelector   — 5 agent cards with icons, descriptions
+   ChatWindow      — message bubbles, streaming display
+   MessageBubble   — user (right) and agent (left) with agent name badge
+   SourceCitations — collapsible list of source documents under AI messages
+   ApprovalPanel   — draft display + approve/revise buttons + notes field
+   FileUpload      — drag and drop + department/doctype selectors
+   StatsCard       — number + label + icon
+
+DESIGN:
+   Clean, professional, B2B SaaS aesthetic
+   Primary: #0F172A (dark navy)
+   Accent:  #3B82F6 (blue)
+   Font: Inter
+   Sidebar: 280px fixed, main: flexible
+   Responsive down to 768px
+
+API CALLS:
+   POST /api/v1/agent/chat        → { query, session_id, context }
+   POST /api/v1/ingest            → FormData (file, department, doc_type)
+   POST /api/v1/agent/report      → { topic, department, format, session_id }
+   POST /api/v1/agent/report/approve → { session_id, thread_id, approved, notes }
+   POST /api/v1/agent/contract    → FormData (file) + form fields
+   GET  /api/v1/stats             → knowledge base statistics
+   GET  /api/v1/health            → health check
+
+STATE:
+   useSession hook   — generates and persists session_id in localStorage
+   useAgent hook     — tracks selected agent, switches context
+   useChat hook      — message history, pending state, streaming
+   useApproval hook  — tracks pending approvals (threadId, draft)

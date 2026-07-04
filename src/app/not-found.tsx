@@ -12,7 +12,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/chat"
-        className="mt-6 rounded-lg bg-[var(--accent-primary)] px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        className="btn-primary mt-6 rounded-[9px] px-4 py-2 text-sm font-semibold"
       >
         Back to chat
       </Link>

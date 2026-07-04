@@ -1,0 +1,291 @@
+Add an About page to the OpsIQ UI.
+
+ROUTE: /about
+
+ADD TO SIDEBAR navigation (below Sessions):
+  Icon: info circle icon
+  Label: "About"
+  Same styling as Chat, Knowledge Base, Sessions nav items
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PAGE CONTENT (use this exact copy):
+
+HERO SECTION:
+  Gradient badge (pill): "AI Operations Hub"
+    background: linear-gradient(135deg, #6366F1, #8B5CF6)
+    color: white, border-radius: 20px, padding: 4px 14px, 12px
+
+  Heading: "OpsIQ"
+    48px, Plus Jakarta Sans, bold, #0A0A0F
+
+  Subheading:
+    "Turns your existing business documents into a
+     24/7 AI operations team — for less than the
+     cost of one lunch per month."
+    20px, #6B7280, max-width: 560px, line-height 1.5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT IT IS SECTION:
+  Section label: "WHAT IT IS" (10px, uppercase, letter-spacing, #9CA3AF)
+  Heading: "Your entire business brain in one place"
+  Body text (14px, #6B7280, line-height 1.7):
+    "OpsIQ is an AI-powered Operations Hub that transforms a
+     startup's scattered business documents into a 24/7 intelligent
+     assistant. Upload your existing documents once — every employee
+     gets instant, accurate answers to operational questions without
+     searching, waiting, or asking a colleague."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AGENTS SECTION:
+  Heading: "5 Specialized AI Agents"
+  Section label: "AGENTS"
+
+  Render as a 2-column grid of cards (single column on mobile).
+  Each card:
+    background: white
+    border: 1px solid #E5E7EB
+    border-radius: 16px
+    padding: 24px
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06)
+    hover: box-shadow 0 4px 16px rgba(99,102,241,0.1),
+           border-color #C7D2FE, transform translateY(-2px)
+    transition: all 200ms ease
+
+  Cards data:
+  [
+    {
+      icon: "🏢",
+      gradient: "linear-gradient(135deg, #6366F1, #818CF8)",
+      name: "Internal Assistant",
+      description: "Answers employee questions about policies,
+                    SOPs and procedures instantly."
+    },
+    {
+      icon: "💬",
+      gradient: "linear-gradient(135deg, #10B981, #34D399)",
+      name: "Support Agent",
+      description: "Handles customer queries with automatic
+                    escalation when confidence is low."
+    },
+    {
+      icon: "📊",
+      gradient: "linear-gradient(135deg, #F59E0B, #FCD34D)",
+      name: "Report Generator",
+      description: "Produces structured business reports with
+                    human approval before finalizing."
+    },
+    {
+      icon: "🚀",
+      gradient: "linear-gradient(135deg, #EC4899, #F472B6)",
+      name: "Onboarding Guide",
+      description: "Personalized day-by-day guidance for new
+                    hires, remembers progress across sessions."
+    },
+    {
+      icon: "📋",
+      gradient: "linear-gradient(135deg, #EF4444, #F87171)",
+      name: "Contract Analyzer",
+      description: "Extracts risks, key dates and obligations.
+                    Flags high-risk clauses for human review."
+    }
+  ]
+
+  Card layout:
+    Top: icon container 44x44px, border-radius 12px,
+         gradient background, icon 22px centered
+    Below icon: agent name 16px, semibold, #0A0A0F
+    Below name: description 13px, #6B7280, line-height 1.5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FEATURES SECTION:
+  Heading: "Core Features"
+  Section label: "FEATURES"
+
+  Render as 3-column icon + text list (single column mobile):
+
+  [
+    {
+      icon: "📄",
+      title: "Document Intelligence",
+      body: "Ingests PDF, Word, Excel, CSV and plain text.
+             Understands tables, headers and structure."
+    },
+    {
+      icon: "🔍",
+      title: "Semantic AI Search",
+      body: "Finds answers by meaning not keywords.
+             Powered by Cohere embeddings and hybrid BM25 fusion."
+    },
+    {
+      icon: "🧠",
+      title: "Conversation Memory",
+      body: "Agents remember context across messages.
+             Follow-up questions work naturally."
+    },
+    {
+      icon: "✋",
+      title: "Human-in-the-Loop",
+      body: "Reports and contracts pause for manager approval
+             before finalizing. AI proposes, humans decide."
+    },
+    {
+      icon: "🔒",
+      title: "Department Filtering",
+      body: "Every document tagged by department and type.
+             Right information to the right person."
+    },
+    {
+      icon: "📊",
+      title: "Knowledge Dashboard",
+      body: "Live view of all ingested documents, chunk counts
+             and department breakdowns."
+    }
+  ]
+
+  Each feature item:
+    background: #F9FAFB
+    border-radius: 12px
+    padding: 20px
+    border: 1px solid #F3F4F6
+    Icon: 36x36px, background white, border-radius 8px,
+          box-shadow 0 1px 3px rgba(0,0,0,0.08), centered, 18px
+    Title: 14px, semibold, #0A0A0F, margin-top 12px
+    Body: 13px, #6B7280, line-height 1.5, margin-top 4px
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BENEFITS TABLE SECTION:
+  Heading: "Who Benefits"
+  Section label: "BENEFITS"
+
+  Render as a clean table:
+    background: white
+    border-radius: 16px
+    border: 1px solid #E5E7EB
+    overflow: hidden
+
+  Table headers: "Who" | "Benefit"
+    background: #F9FAFB
+    padding: 12px 20px
+    font-size: 12px, uppercase, letter-spacing 0.05em, #6B7280
+
+  Table rows:
+  [
+    ["🧑‍💼 Founders",      "Answers to legal, HR and vendor questions in seconds instead of hours"],
+    ["👥 HR Teams",        "New hires self-serve 80% of onboarding questions from Day 1"],
+    ["🎧 Support Staff",   "Handle 3× more customer queries with cited, policy-grounded answers"],
+    ["⚖️ Finance & Legal", "Contract risks surfaced automatically before signing"],
+    ["🏠 All Employees",   "Stop asking colleagues — get accurate answers instantly"]
+  ]
+
+  Row styling:
+    padding: 14px 20px
+    border-top: 1px solid #F3F4F6
+    font-size: 14px
+    "Who" cell: semibold, #0A0A0F, width 200px, white-space nowrap
+    "Benefit" cell: #6B7280
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VALUE METRICS SECTION:
+  Heading: "The Numbers"
+  Section label: "VALUE"
+
+  4 metric cards in a row (2x2 on mobile):
+  [
+    { number: "3–4 hrs",  label: "recovered per employee per week" },
+    { number: "<$50",     label: "per month total running cost"    },
+    { number: "3×",       label: "more support queries handled"    },
+    { number: "80%",      label: "onboarding questions self-served"}
+  ]
+
+  Each metric card:
+    background: white
+    border: 1px solid #E5E7EB
+    border-radius: 16px
+    padding: 28px 24px
+    text-align: center
+    Number: 36px, Plus Jakarta Sans, bold,
+            background: var(--accent-gradient),
+            -webkit-background-clip: text,
+            -webkit-text-fill-color: transparent
+    Label: 13px, #6B7280, margin-top 6px, line-height 1.4
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TECH STACK SECTION:
+  Heading: "Built With"
+  Section label: "STACK"
+
+  Horizontal scrolling pill row:
+  [
+    "Python", "FastAPI", "LangGraph", "pgvector",
+    "Cohere embed-v3", "pdfplumber", "spaCy",
+    "BM25 + Semantic RRF", "RAGAS", "Next.js"
+  ]
+
+  Each pill:
+    background: #F3F4F6
+    border-radius: 20px
+    padding: 6px 14px
+    font-size: 13px, #374151
+    font-family: monospace for tech terms
+    hover: background #EEF2FF, color #6366F1
+    transition: all 150ms ease
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CTA FOOTER SECTION:
+  Full-width gradient banner:
+    background: linear-gradient(135deg, #6366F1, #8B5CF6)
+    border-radius: 20px
+    padding: 48px
+    text-align: center
+
+  Heading: "Start in minutes"
+    28px, Plus Jakarta Sans, bold, white
+
+  Subtext:
+    "Upload your first document and ask your first question."
+    16px, rgba(255,255,255,0.8)
+
+  Button: "Go to Chat →"
+    background: white
+    color: #6366F1
+    border-radius: 10px
+    padding: 12px 28px
+    font-size: 15px, font-weight 600
+    onClick: navigate to /chat
+    hover: background rgba(255,255,255,0.9),
+           transform translateY(-1px)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PAGE LAYOUT:
+  max-width: 900px
+  margin: 0 auto
+  padding: 48px 32px
+  display: flex, flex-direction: column
+  gap: 64px between sections
+
+  Section structure (reusable):
+    Section label: 10px uppercase tracking-widest #9CA3AF mb-2
+    Section heading: 24px Plus Jakarta Sans semibold #0A0A0F mb-3
+    Section content: below heading
+
+SCROLL BEHAVIOR:
+  Add smooth scroll-reveal on each section:
+  Use Intersection Observer API.
+  On enter viewport:
+    opacity: 0 → 1
+    transform: translateY(16px) → translateY(0)
+    transition: 400ms ease
+    stagger child elements by 80ms
+
+DO NOT CHANGE:
+  Any existing pages, components or API connections.
+  Only add the new /about route and sidebar nav item.

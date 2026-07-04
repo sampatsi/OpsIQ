@@ -1,12 +1,83 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { AgentId, ChatMessage, SourceCitation } from "@/types";
+import type { AgentId, ChatMessage, ChatResponse, SourceCitation } from "@/types";
+import { FAITHFULNESS_GATE } from "@/types";
 import { sendChat } from "@/lib/api";
 import { AGENTS } from "@/lib/agents";
 
 function createId() {
   return `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function formatAgentLabel(agentUsed?: string, fallback?: string): string {
+  if (!agentUsed || agentUsed === "guardrails") return fallback ?? "Agent";
+  const byId = AGENTS.find((a) => a.id === agentUsed);
+  if (byId) return byId.name;
+  const byName = AGENTS.find((a) => a.name.toLowerCase() === agentUsed.toLowerCase());
+  return byName?.name ?? fallback ?? agentUsed;
+}
+
+function mapChatResponse(
+  data: ChatResponse,
+  agentName: string
+): ChatMessage | null {
+  if (data.status === "awaiting_approval" && data.thread_id && data.draft) {
+    return null;
+  }
+
+  const guardrail = data.guardrail;
+  const grounding = data.grounding;
+  const label = formatAgentLabel(data.agent_used, agentName);
+
+  if (guardrail?.status === "blocked") {
+    return {
+      id: createId(),
+      role: "assistant",
+      content: guardrail.message ?? data.answer ?? "Request blocked by guardrails.",
+      agentName: "Guardrails",
+      guardrail: {
+        ...guardrail,
+        audit_id: guardrail.audit_id ?? data.guardrail?.audit_id,
+        restricted_fields:
+          guardrail.restricted_fields ?? data.guardrail?.restricted_fields,
+      },
+      timestamp: new Date(),
+    };
+  }
+
+  if (guardrail?.status === "held") {
+    const score = grounding?.faithfulness;
+    const heldMessage =
+      guardrail.message ??
+      (score != null
+        ? `Answer held — grounding score ${score.toFixed(2)} was below the ${FAITHFULNESS_GATE.toFixed(2)} threshold. Try narrowing the question or uploading the source document.`
+        : "Answer held for review — grounding score was below threshold.");
+    return {
+      id: createId(),
+      role: "assistant",
+      content: heldMessage,
+      agentName: label,
+      guardrail,
+      grounding,
+      sources: data.sources,
+      timestamp: new Date(),
+    };
+  }
+
+  const content = data.answer?.trim();
+  if (!content) return null;
+
+  return {
+    id: createId(),
+    role: "assistant",
+    content,
+    agentName: label,
+    sources: data.sources,
+    grounding,
+    guardrail: guardrail?.status ? guardrail : undefined,
+    timestamp: new Date(),
+  };
 }
 
 interface UseChatOptions {
@@ -41,7 +112,7 @@ export function useChat({
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
       setError(null);
-      setStreamingContent("Thinking...");
+      setStreamingContent("Thinking…");
 
       try {
         const data = await sendChat({
@@ -57,19 +128,11 @@ export function useChat({
           return;
         }
 
-        const content =
-          data.answer ?? data.response ?? data.message ?? "No response received.";
-        const assistantMessage: ChatMessage = {
-          id: createId(),
-          role: "assistant",
-          content,
-          agentName,
-          sources: data.sources,
-          timestamp: new Date(),
-        };
-
+        const assistantMessage = mapChatResponse(data, agentName);
         setStreamingContent(null);
-        setMessages((prev) => [...prev, assistantMessage]);
+        if (assistantMessage) {
+          setMessages((prev) => [...prev, assistantMessage]);
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to send message";
         setError(message);
@@ -82,7 +145,7 @@ export function useChat({
   );
 
   const addAssistantMessage = useCallback(
-    (content: string, sources?: SourceCitation[]) => {
+    (content: string, sources?: SourceCitation[], grounding?: ChatMessage["grounding"]) => {
       setMessages((prev) => [
         ...prev,
         {
@@ -91,6 +154,7 @@ export function useChat({
           content,
           agentName,
           sources,
+          grounding,
           timestamp: new Date(),
         },
       ]);

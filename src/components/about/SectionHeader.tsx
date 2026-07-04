@@ -7,10 +7,12 @@ interface SectionHeaderProps {
 export function SectionHeader({ label, heading, className }: SectionHeaderProps) {
   return (
     <div className={className}>
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[#9CA3AF]">
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-2)]">
         {label}
       </p>
-      <h2 className="font-display text-2xl font-semibold text-[#0A0A0F]">{heading}</h2>
+      <h2 className="font-display text-2xl font-semibold tracking-tight text-[var(--text)]">
+        {heading}
+      </h2>
     </div>
   );
 }

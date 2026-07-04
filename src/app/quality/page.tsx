@@ -5,10 +5,11 @@ import { EvaluationHistoryTable } from "@/components/quality/EvaluationHistoryTa
 import { MetricExplanationGrid } from "@/components/quality/MetricExplanationGrid";
 import { MetricScoreCard } from "@/components/quality/MetricScoreCard";
 import { QualityEmptyState } from "@/components/quality/QualityEmptyState";
+import { PageHeader } from "@/components/PageHeader";
 import { ScoreCardSkeleton } from "@/components/quality/ScoreCardSkeleton";
 import { useQuality } from "@/hooks/useQuality";
 import { METRIC_CONFIGS, formatTimeAgo } from "@/lib/ragas-quality";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
 const QualityTrendChart = dynamic(
   () =>
@@ -16,8 +17,8 @@ const QualityTrendChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-80 items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white">
-        <Loader2 className="h-5 w-5 animate-spin text-[var(--accent-primary)]" />
+      <div className="console-card flex h-80 items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-[var(--teal)]" />
       </div>
     ),
   }
@@ -29,23 +30,21 @@ export default function QualityPage() {
   const hasData = !!latest || history.length > 0;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[var(--bg-main)]">
-      <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 md:px-8">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-[#0A0A0F]">
-            AI Quality Dashboard
-          </h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#6B7280]">
-            Read-only view of stored RAGAS scores. This page never runs evaluations or
-            uses API tokens — it only displays existing results from the database.
-          </p>
-          {latest?.evaluated_at && (
-            <p className="mt-2 text-xs text-[#9CA3AF]">
+    <div className="console-page">
+      <PageHeader
+        icon={Sparkles}
+        title="AI Quality Dashboard"
+        description="Read-only view of stored RAGAS scores. This page never runs evaluations or uses API tokens — it only displays existing results from the database."
+        meta={
+          latest?.evaluated_at ? (
+            <p className="font-mono text-xs text-[var(--text-2)]">
               Last evaluated: {formatTimeAgo(latest.evaluated_at)}
             </p>
-          )}
-        </div>
+          ) : undefined
+        }
+      />
 
+      <div className="mx-auto max-w-6xl space-y-10 px-6 py-8 md:px-8">
         {isLoading && (
           <div className="space-y-10">
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -53,8 +52,8 @@ export default function QualityPage() {
                 <ScoreCardSkeleton key={i} />
               ))}
             </section>
-            <div className="flex h-40 items-center justify-center text-sm text-[#9CA3AF]">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <div className="flex h-40 items-center justify-center text-sm text-[var(--text-2)]">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin text-[var(--teal)]" />
               Loading saved scores…
             </div>
           </div>

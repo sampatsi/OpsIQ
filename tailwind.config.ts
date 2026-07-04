@@ -6,33 +6,46 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        border: "var(--border)",
-        input: "var(--border)",
-        ring: "var(--accent-primary)",
-        background: "var(--bg-main)",
-        foreground: "var(--text-primary)",
+        border: "var(--line)",
+        input: "var(--line)",
+        ring: "var(--teal)",
+        background: "var(--paper)",
+        foreground: "var(--text)",
+        ink: "var(--ink)",
+        teal: {
+          DEFAULT: "var(--teal)",
+          bg: "var(--teal-bg)",
+        },
+        amber: {
+          DEFAULT: "var(--amber)",
+          bg: "var(--amber-bg)",
+        },
         muted: {
-          DEFAULT: "#F3F4F6",
-          foreground: "var(--text-muted)",
+          DEFAULT: "var(--line)",
+          foreground: "var(--text-2)",
         },
         card: {
-          DEFAULT: "var(--bg-card)",
-          foreground: "var(--text-primary)",
+          DEFAULT: "var(--card)",
+          foreground: "var(--text)",
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
-        display: ["var(--font-jakarta)", "Plus Jakarta Sans", "sans-serif"],
+        sans: ["var(--font-plex)", "IBM Plex Sans", "system-ui", "sans-serif"],
+        display: ["var(--font-space)", "Space Grotesk", "sans-serif"],
+        mono: ["var(--font-plex-mono)", "IBM Plex Mono", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      maxWidth: {
+        chat: "860px",
       },
     },
   },

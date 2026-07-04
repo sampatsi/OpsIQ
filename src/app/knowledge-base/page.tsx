@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { FileText, Layers, Upload } from "lucide-react";
+import { FileText, Layers, Upload, BookOpen } from "lucide-react";
 import { StatsCard } from "@/components/StatsCard";
+import { PageHeader } from "@/components/PageHeader";
 import { FileUpload } from "@/components/FileUpload";
 import {
   Dialog,
@@ -66,28 +67,23 @@ export default function KnowledgeBasePage() {
     : [];
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 md:p-8">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-[var(--text-primary)]">
-              Knowledge Base
-            </h1>
-            <p className="text-sm text-[var(--text-secondary)]">
-              Documents indexed for AI retrieval across departments.
-            </p>
-          </div>
+    <div className="console-page">
+      <PageHeader
+        icon={BookOpen}
+        title="Knowledge Base"
+        description="Documents indexed for AI retrieval across departments."
+        actions={
           <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="btn-gradient inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold"
+                className="btn-primary inline-flex items-center gap-2 rounded-[9px] px-4 py-2.5 text-sm font-semibold"
               >
                 <Upload className="h-4 w-4" />
                 Upload document
               </button>
             </DialogTrigger>
-            <DialogContent className="border-[var(--border)] bg-white">
+            <DialogContent className="border-[var(--line)] bg-[var(--card)]">
               <DialogHeader>
                 <DialogTitle className="font-display">Upload to knowledge base</DialogTitle>
               </DialogHeader>
@@ -99,10 +95,12 @@ export default function KnowledgeBasePage() {
               />
             </DialogContent>
           </Dialog>
-        </div>
+        }
+      />
 
+      <div className="mx-auto max-w-5xl px-6 py-8 md:px-8">
         {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-6 rounded-xl border border-[var(--red-bg)] bg-[var(--red-bg)] p-4 text-sm text-[var(--red)]">
             {error}
             {errorHint && <p className="mt-1 text-xs">{errorHint}</p>}
           </div>
@@ -121,20 +119,18 @@ export default function KnowledgeBasePage() {
           />
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-white shadow-design-sm">
-          <div className="border-b border-[var(--border-subtle)] px-6 py-4">
-            <h2 className="font-display font-semibold text-[var(--text-primary)]">
+        <div className="console-card">
+          <div className="border-b border-[var(--line)] px-6 py-4">
+            <h2 className="font-display font-semibold text-[var(--text)]">
               Documents by department
             </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--border-subtle)] bg-[#F9FAFB] text-left">
-                  <th className="px-6 py-3 font-medium text-[var(--text-secondary)]">
-                    Department
-                  </th>
-                  <th className="px-6 py-3 text-right font-medium text-[var(--text-secondary)]">
+                <tr className="console-table-head border-b border-[var(--line)]">
+                  <th className="px-6 py-3 font-medium text-[var(--text-2)]">Department</th>
+                  <th className="px-6 py-3 text-right font-medium text-[var(--text-2)]">
                     Documents
                   </th>
                 </tr>
@@ -142,13 +138,13 @@ export default function KnowledgeBasePage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={2} className="px-6 py-8 text-center text-[var(--text-muted)]">
+                    <td colSpan={2} className="px-6 py-8 text-center text-[var(--text-2)]">
                       Loading...
                     </td>
                   </tr>
                 ) : departments.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className="px-6 py-8 text-center text-[var(--text-muted)]">
+                    <td colSpan={2} className="px-6 py-8 text-center text-[var(--text-2)]">
                       No documents indexed yet. Upload your first document.
                     </td>
                   </tr>
@@ -156,12 +152,12 @@ export default function KnowledgeBasePage() {
                   departments.map(([dept, count]) => (
                     <tr
                       key={dept}
-                      className="border-b border-[var(--border-subtle)] last:border-0 transition-colors hover:bg-[var(--bg-card-hover)]"
+                      className="border-b border-[var(--line)] last:border-0 transition-colors hover:bg-[var(--bg-card-hover)]"
                     >
-                      <td className="px-6 py-3 font-medium capitalize text-[var(--text-primary)]">
+                      <td className="px-6 py-3 font-medium capitalize text-[var(--text)]">
                         {dept}
                       </td>
-                      <td className="px-6 py-3 text-right tabular-nums text-[var(--text-primary)]">
+                      <td className="px-6 py-3 text-right tabular-nums text-[var(--text)]">
                         {count}
                       </td>
                     </tr>

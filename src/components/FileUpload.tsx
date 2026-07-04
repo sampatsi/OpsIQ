@@ -100,15 +100,15 @@ export function FileUpload({ compact, variant = "default", onSuccess }: FileUplo
                 dragOver && "border-[var(--accent-primary)] bg-[var(--bg-sidebar-hover)]"
               )
             : cn(
-                "border-[var(--border)] bg-[var(--bg-card)]",
-                dragOver && "border-[var(--accent-primary)] bg-[#EEF2FF]/30"
+                "border-[var(--line)] bg-[var(--card)]",
+                dragOver && "border-[var(--teal)] bg-[var(--teal-bg)]/40"
               ),
           compact ? "p-3" : "p-4"
         )}
       >
         {file ? (
           <div className="flex items-center gap-2 text-sm">
-            <File className={cn("h-4 w-4", isSidebar ? "text-[#818CF8]" : "text-[var(--accent-primary)]")} />
+            <File className={cn("h-4 w-4", isSidebar ? "text-[var(--text-inv-2)]" : "text-[var(--teal)]")} />
             <span className={cn("truncate max-w-[180px]", isSidebar ? "text-[#E5E7EB]" : "")}>
               {file.name}
             </span>
@@ -118,20 +118,20 @@ export function FileUpload({ compact, variant = "default", onSuccess }: FileUplo
             <Upload
               className={cn(
                 "mb-2",
-                isSidebar ? "h-6 w-6 text-[#A5B4FC]" : "h-5 w-5 text-[var(--text-muted)]"
+                isSidebar ? "h-6 w-6 text-[var(--text-inv-2)]" : "h-5 w-5 text-[var(--text-2)]"
               )}
             />
             <p
               className={cn(
                 "text-center text-[12px]",
-                isSidebar ? "text-[#C4CBD6]" : "text-[var(--text-muted)]"
+                  isSidebar ? "text-[#C4CBD6]" : "text-[var(--text-2)]"
               )}
             >
               Drag & drop or{" "}
               <label
                 className={cn(
                   "cursor-pointer font-medium hover:underline",
-                  isSidebar ? "text-[#C7D2FE]" : "text-[var(--accent-primary)]"
+                  isSidebar ? "text-[var(--text-inv)]" : "text-[var(--teal)]"
                 )}
               >
                 browse
@@ -194,7 +194,7 @@ export function FileUpload({ compact, variant = "default", onSuccess }: FileUplo
         type="button"
         onClick={upload}
         disabled={!file || uploading}
-        className="btn-gradient flex h-[38px] w-full items-center justify-center gap-2 rounded-lg text-[13px] font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+        className="btn-primary flex h-[38px] w-full items-center justify-center gap-2 rounded-[9px] text-[13px] font-semibold disabled:cursor-not-allowed disabled:opacity-40"
       >
         {uploading ? (
           <>

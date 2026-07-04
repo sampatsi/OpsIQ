@@ -1,59 +1,68 @@
 "use client";
 
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SidebarLogo } from "@/components/SidebarLogo";
-import { SidebarNav } from "@/components/SidebarNav";
-import { LiveBackendBadge } from "@/components/LiveBackendBadge";
+import { ConsoleSidebar } from "@/components/ConsoleSidebar";
+import { OpsIQLogo } from "@/components/OpsIQLogo";
+import { AgentProvider, useAgent } from "@/context/AgentContext";
+import type { AgentId } from "@/types";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const isChat = pathname === "/chat";
+  return (
+    <AgentProvider>
+      <AppShellLayout>{children}</AppShellLayout>
+    </AgentProvider>
+  );
+}
 
-  if (isChat) {
-    return <main className="flex min-h-0 min-h-screen flex-1 flex-col">{children}</main>;
-  }
+function AppShellLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { selectedAgent, selectAgent } = useAgent();
+
+  const handleSelectAgent = useCallback(
+    (id: AgentId) => {
+      selectAgent(id);
+      if (pathname !== "/chat") {
+        router.push("/chat");
+      }
+    },
+    [pathname, router, selectAgent]
+  );
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <header className="flex h-14 items-center justify-between bg-sidebar-surface px-4 shadow-design-md md:hidden">
-        <SidebarLogo />
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--line-ink)] bg-[var(--ink)] px-4 max-[820px]:flex md:hidden">
+        <Link href="/" aria-label="OpsIQ home">
+          <OpsIQLogo markOnly size={30} loop variant="dark" />
+        </Link>
         <button
           type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-lg p-2 text-[#E5E7EB] transition-colors hover:bg-[var(--bg-sidebar-hover)]"
+          className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border border-[var(--line-ink)] bg-[var(--ink-2)] text-[var(--text-inv)]"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
       </header>
 
-      <aside
+      <ConsoleSidebar
+        selectedAgent={selectedAgent}
+        onSelectAgent={handleSelectAgent}
+        mobileOpen={mobileOpen}
+        onMobileOpenChange={setMobileOpen}
+      />
+
+      <main
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col bg-sidebar-surface shadow-design-md transition-transform duration-200 md:static md:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          "flex min-h-0 min-h-screen flex-1 flex-col overflow-hidden bg-[var(--paper)]",
+          pathname === "/chat" && "max-[820px]:min-h-[calc(100dvh-3.5rem)]"
         )}
       >
-        <SidebarLogo />
-        <SidebarNav onNavigate={() => setMobileOpen(false)} className="mt-2" />
-        <div className="mt-auto">
-          <LiveBackendBadge />
-        </div>
-      </aside>
-
-      {mobileOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
-          onClick={() => setMobileOpen(false)}
-          aria-label="Close menu"
-        />
-      )}
-
-      <main className="flex min-h-0 min-h-screen flex-1 flex-col bg-[var(--bg-main)]">
         {children}
       </main>
     </div>

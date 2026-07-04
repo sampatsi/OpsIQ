@@ -36,7 +36,7 @@ export function getStatus(score: number | null | undefined, threshold: number): 
 }
 
 export function getColor(status: QualityStatus): string {
-  return { pass: "#10B981", warn: "#F59E0B", fail: "#EF4444" }[status];
+  return { pass: "#0E8C7F", warn: "#C4881A", fail: "#B54141" }[status];
 }
 
 export function formatThresholdPercent(threshold: number): string {
@@ -58,32 +58,32 @@ export const METRIC_CONFIGS: MetricConfig[] = [
     name: "Faithfulness",
     tooltip: "Are answers grounded in retrieved documents?",
     icon: ShieldCheck,
-    gradientClass: "agent-gradient-support",
-    chartColor: "#10B981",
+    gradientClass: "agent-gradient-internal",
+    chartColor: "#0E8C7F",
   },
   {
     key: "answer_relevancy",
     name: "Answer Relevancy",
     tooltip: "Do answers address the question asked?",
     icon: Target,
-    gradientClass: "bg-accent-gradient",
-    chartColor: "#6366F1",
+    gradientClass: "agent-gradient-support",
+    chartColor: "#2E5FA3",
   },
   {
     key: "context_precision",
     name: "Context Precision",
     tooltip: "Are retrieved chunks actually relevant?",
     icon: Filter,
-    gradientClass: "agent-gradient-onboarding",
-    chartColor: "#8B5CF6",
+    gradientClass: "agent-gradient-report",
+    chartColor: "#C98A1B",
   },
   {
     key: "context_recall",
     name: "Context Recall",
     tooltip: "Was all needed information retrieved?",
     icon: Search,
-    gradientClass: "agent-gradient-internal",
-    chartColor: "#F59E0B",
+    gradientClass: "agent-gradient-onboarding",
+    chartColor: "#1F4E46",
   },
 ];
 

@@ -43,19 +43,19 @@ export function EvaluationHistoryTable({ history, thresholds }: EvaluationHistor
 
   return (
     <section>
-      <h2 className="mb-4 font-display text-lg font-semibold text-[#0A0A0F]">
+      <h2 className="mb-4 font-display text-lg font-semibold text-[var(--text)]">
         Evaluation History
       </h2>
-      <div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white">
+      <div className="console-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-[#F9FAFB] text-left">
+              <tr className="console-table-head">
                 {["Date", "Faithfulness", "Relevancy", "Precision", "Recall", "Status", "Alert"].map(
                   (col) => (
                     <th
                       key={col}
-                      className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[#6B7280]"
+                      className="px-5 py-3 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--text-2)]"
                     >
                       {col}
                     </th>
@@ -66,7 +66,7 @@ export function EvaluationHistoryTable({ history, thresholds }: EvaluationHistor
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-5 py-8 text-center text-[#9CA3AF]">
+                  <td colSpan={7} className="px-5 py-8 text-center text-[var(--text-2)]">
                     No evaluation history yet.
                   </td>
                 </tr>
@@ -78,11 +78,11 @@ export function EvaluationHistoryTable({ history, thresholds }: EvaluationHistor
                     <tr
                       key={row.evaluated_at}
                       className={cn(
-                        "border-t border-[#F3F4F6]",
-                        row.alert_fired ? "bg-[#FFF7ED]" : "bg-white"
+                        "border-t border-[var(--line)]",
+                        row.alert_fired ? "bg-[var(--amber-bg)]" : "bg-[var(--card)]"
                       )}
                     >
-                      <td className="whitespace-nowrap px-5 py-3.5 text-[#0A0A0F]">
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[var(--text)]">
                         {formatEvaluatedAt(row.evaluated_at)}
                       </td>
                       {SCORE_COLUMNS.map(({ key }) => (
@@ -92,11 +92,11 @@ export function EvaluationHistoryTable({ history, thresholds }: EvaluationHistor
                       ))}
                       <td className="px-5 py-3.5">
                         {passed ? (
-                          <span className="inline-flex rounded-full bg-[#DCFCE7] px-2.5 py-0.5 text-xs font-medium text-[#166534]">
+                          <span className="inline-flex rounded-full bg-[var(--teal-bg)] px-2.5 py-0.5 text-xs font-medium text-[var(--teal)]">
                             All Pass
                           </span>
                         ) : (
-                          <span className="inline-flex rounded-full bg-[#FEE2E2] px-2.5 py-0.5 text-xs font-medium text-[#991B1B]">
+                          <span className="inline-flex rounded-full bg-[var(--red-bg)] px-2.5 py-0.5 text-xs font-medium text-[var(--red)]">
                             {failedCount} Failed
                           </span>
                         )}

@@ -22,14 +22,14 @@ export function MetricScoreCard({ config, score, thresholds }: MetricScoreCardPr
 
   const badge =
     status === "pass"
-      ? { bg: "#DCFCE7", text: "#166534", label: "✓ Pass" }
+      ? { bg: "var(--teal-bg)", text: "var(--teal)", label: "✓ Pass" }
       : status === "warn"
-        ? { bg: "#FEF3C7", text: "#92400E", label: "⚠ Warning" }
-        : { bg: "#FEE2E2", text: "#991B1B", label: "✗ Fail" };
+        ? { bg: "var(--amber-bg)", text: "var(--amber)", label: "⚠ Warning" }
+        : { bg: "var(--red-bg)", text: "var(--red)", label: "✗ Fail" };
 
   return (
     <article
-      className="relative rounded-2xl border border-[#E5E7EB] bg-white p-7 shadow-design-sm"
+      className="console-card p-7"
       title={config.tooltip}
     >
       <MetricCardHeader config={config} Icon={Icon} />
@@ -39,10 +39,10 @@ export function MetricScoreCard({ config, score, thresholds }: MetricScoreCardPr
       </p>
 
       <div className="mt-5">
-        <p className="text-xs text-[#6B7280]">
+        <p className="text-xs text-[var(--text-2)]">
           Target: &gt; {formatThresholdPercent(threshold)}
         </p>
-        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#F3F4F6]">
+        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[var(--line)]">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{ width: `${Math.min(score, 1) * 100}%`, backgroundColor: color }}
@@ -76,7 +76,7 @@ function MetricCardHeader({
       >
         <Icon className="h-4 w-4 text-white" />
       </div>
-      <p className="text-sm font-medium uppercase tracking-wide text-[#6B7280]">
+      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--text-2)]">
         {config.name}
       </p>
     </div>

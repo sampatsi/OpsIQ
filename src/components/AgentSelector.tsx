@@ -1,24 +1,9 @@
 "use client";
 
-import {
-  Building2,
-  Headphones,
-  FileBarChart,
-  UserPlus,
-  FileSignature,
-  type LucideIcon,
-} from "lucide-react";
-import { AGENTS, AGENT_GRADIENT_CLASS } from "@/lib/agents";
+import { AGENTS, AGENT_GLYPH, GATED_AGENTS } from "@/lib/agents";
+import { AgentGlyph } from "@/components/AgentGlyph";
 import type { AgentId } from "@/types";
 import { cn } from "@/lib/utils";
-
-const ICONS: Record<string, LucideIcon> = {
-  Building2,
-  Headphones,
-  FileBarChart,
-  UserPlus,
-  FileSignature,
-};
 
 interface AgentSelectorProps {
   selected: AgentId;
@@ -27,59 +12,45 @@ interface AgentSelectorProps {
 
 export function AgentSelector({ selected, onSelect }: AgentSelectorProps) {
   return (
-    <div className="space-y-1.5">
-      <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#64748B]">
+    <section className="px-3 pb-1.5 pt-4" aria-label="Agents">
+      <p className="px-2.5 pb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-inv-2)]">
         Agents
       </p>
-      <div className="space-y-1">
-        {AGENTS.map((agent, index) => {
-          const Icon = ICONS[agent.icon] ?? Building2;
+      <div className="space-y-0.5">
+        {AGENTS.map((agent) => {
           const isActive = selected === agent.id;
-          const gradientClass = AGENT_GRADIENT_CLASS[agent.id];
+          const isGated = GATED_AGENTS.includes(agent.id);
 
           return (
             <button
               key={agent.id}
               type="button"
               onClick={() => onSelect(agent.id)}
-              style={{ animationDelay: `${index * 60}ms` }}
               className={cn(
-                "animate-slide-in-left flex w-full items-start gap-2.5 rounded-[10px] border border-transparent p-2.5 text-left transition-all duration-150",
+                "agent-row flex w-full items-center gap-[11px] rounded-[10px] px-2.5 py-[9px] text-left transition-colors duration-150",
                 isActive
-                  ? "border-[rgba(99,102,241,0.35)] bg-[var(--bg-sidebar-active)] shadow-[inset_0_0_0_1px_rgba(99,102,241,0.12)]"
-                  : "bg-transparent hover:bg-[var(--bg-sidebar-hover)]"
+                  ? "bg-[var(--ink-2)] shadow-[inset_2px_0_0_var(--teal)]"
+                  : "text-[var(--text-inv)] hover:bg-[var(--ink-2)]"
               )}
             >
-              <div
-                className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-                  gradientClass
-                )}
-              >
-                <Icon className="h-4 w-4 text-white" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p
-                  className={cn(
-                    "text-[13px] font-semibold",
-                    isActive ? "text-white" : "text-[#E5E7EB]"
-                  )}
-                >
+              <AgentGlyph agentId={agent.id} label={AGENT_GLYPH[agent.id]} size="menu" />
+              <span className="min-w-0 flex-1 leading-snug">
+                <span className="block text-[0.85rem] font-semibold leading-[1.2] text-[var(--text-inv)]">
                   {agent.name}
-                </p>
-                <p
-                  className={cn(
-                    "truncate text-[11px] leading-snug",
-                    isActive ? "text-[#D1D5DB]" : "text-[#B0B8C5]"
-                  )}
-                >
-                  {agent.description}
-                </p>
-              </div>
+                </span>
+                <span className="block text-[0.7rem] leading-[1.3] text-[var(--text-inv-2)]">
+                  {agent.tagline}
+                </span>
+              </span>
+              {isGated && (
+                <span className="agent-gate ml-auto shrink-0">
+                  GATED
+                </span>
+              )}
             </button>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

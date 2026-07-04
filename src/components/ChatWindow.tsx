@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Sparkles } from "lucide-react";
 import { MessageBubble } from "@/components/MessageBubble";
 import { ApprovalPanel } from "@/components/ApprovalPanel";
+import { GuardrailIntercept } from "@/components/GuardrailIntercept";
+import { GuardrailHeld } from "@/components/GuardrailHeld";
 import { TypingIndicator } from "@/components/TypingIndicator";
+import { OpsIQLogo } from "@/components/OpsIQLogo";
 import type { ChatMessage } from "@/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SUGGESTIONS = [
   "What's our leave policy?",
@@ -20,10 +21,39 @@ interface ChatWindowProps {
   isLoading?: boolean;
   agentName?: string;
   approvalDraft?: string | null;
+  approvalThreadId?: string | null;
   isApprovalSubmitting?: boolean;
   onApprove?: (notes?: string) => void;
   onRevise?: (notes?: string) => void;
   onSuggestionSelect?: (text: string) => void;
+}
+
+function renderMessage(msg: ChatMessage) {
+  if (msg.guardrail?.status === "blocked") {
+    return (
+      <GuardrailIntercept
+        key={msg.id}
+        title={`Guardrail — ${msg.guardrail.reason_code ?? "blocked"}`}
+        message={msg.guardrail.message ?? msg.content}
+        reasonCode={msg.guardrail.reason_code}
+        auditId={msg.guardrail.audit_id}
+        restrictedFields={msg.guardrail.restricted_fields}
+      />
+    );
+  }
+
+  if (msg.guardrail?.status === "held") {
+    return (
+      <GuardrailHeld
+        key={msg.id}
+        message={msg.content}
+        faithfulness={msg.grounding?.faithfulness}
+        reasonCode={msg.guardrail.reason_code}
+      />
+    );
+  }
+
+  return <MessageBubble key={msg.id} message={msg} />;
 }
 
 export function ChatWindow({
@@ -31,6 +61,7 @@ export function ChatWindow({
   streamingContent,
   isLoading,
   approvalDraft,
+  approvalThreadId,
   isApprovalSubmitting,
   onApprove,
   onRevise,
@@ -44,19 +75,17 @@ export function ChatWindow({
   }, [messages, streamingContent, approvalDraft]);
 
   return (
-    <ScrollArea className="h-full flex-1 bg-[var(--bg-main)]">
-      <div className="mx-auto flex min-h-full max-w-[780px] flex-col gap-5 px-6 py-6">
+    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--paper)]">
+      <div className="mx-auto flex max-w-chat flex-col gap-5 px-6 py-7 max-[820px]:px-4">
         {showEmpty && (
-          <div className="flex flex-1 flex-col items-center justify-center py-20 text-center">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-accent-gradient shadow-design-lg">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
-            <h2 className="font-display text-2xl font-semibold text-[var(--text-primary)]">
-              OpsIQ AI Operations Hub
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <OpsIQLogo size={52} markOnly loop={false} className="mb-5" />
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-[var(--text)]">
+              Operations Console
             </h2>
-            <p className="mt-2 max-w-[380px] text-sm text-[var(--text-secondary)]">
-              Select an agent and ask a question. Responses are grounded in your
-              organization&apos;s knowledge base.
+            <p className="mt-2 max-w-md text-sm text-[var(--text-2)]">
+              Select an agent and ask a question. Answers cite your knowledge base
+              and pass through active guardrails.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((chip) => (
@@ -64,7 +93,7 @@ export function ChatWindow({
                   key={chip}
                   type="button"
                   onClick={() => onSuggestionSelect?.(chip)}
-                  className="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[13px] text-[#374151] transition-all duration-150 hover:border-[var(--accent-primary)] hover:bg-[#F9FAFB] hover:text-[var(--accent-primary)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--card)] px-4 py-2 text-[13px] text-[var(--text-2)] transition-colors hover:border-[var(--teal)] hover:text-[var(--teal)]"
                 >
                   {chip}
                 </button>
@@ -73,13 +102,17 @@ export function ChatWindow({
           </div>
         )}
 
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
-        ))}
+        {messages.length > 0 && (
+          <span className="self-center font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-2)]">
+            Today
+          </span>
+        )}
+
+        {messages.map(renderMessage)}
 
         {(streamingContent || isLoading) && (
-          <div className="flex justify-start animate-message-in">
-            <div className="rounded-[18px_18px_18px_4px] border border-[var(--border-subtle)] bg-white px-5 py-4 shadow-design-sm">
+          <div className="animate-rise mr-auto max-w-[78%] max-[820px]:max-w-[94%]">
+            <div className="rounded-2xl rounded-bl-[5px] border border-[var(--line)] bg-[var(--card)] px-4 py-3 shadow-design-sm">
               <TypingIndicator />
             </div>
           </div>
@@ -88,6 +121,7 @@ export function ChatWindow({
         {approvalDraft && onApprove && onRevise && (
           <ApprovalPanel
             draft={approvalDraft}
+            threadId={approvalThreadId ?? undefined}
             isSubmitting={isApprovalSubmitting}
             onApprove={onApprove}
             onRevise={onRevise}
@@ -96,6 +130,6 @@ export function ChatWindow({
 
         <div ref={bottomRef} />
       </div>
-    </ScrollArea>
+    </div>
   );
 }

@@ -1,35 +1,35 @@
 export const ABOUT_AGENTS = [
   {
-    icon: "🏢",
-    gradient: "linear-gradient(135deg, #6366F1, #818CF8)",
+    icon: "IN",
+    glyphClass: "g-int",
     name: "Internal Assistant",
     description:
       "Answers employee questions about policies, SOPs and procedures instantly.",
   },
   {
-    icon: "💬",
-    gradient: "linear-gradient(135deg, #10B981, #34D399)",
+    icon: "SU",
+    glyphClass: "g-sup",
     name: "Support Agent",
     description:
       "Handles customer queries with automatic escalation when confidence is low.",
   },
   {
-    icon: "📊",
-    gradient: "linear-gradient(135deg, #F59E0B, #FCD34D)",
+    icon: "RE",
+    glyphClass: "g-rep",
     name: "Report Generator",
     description:
       "Produces structured business reports with human approval before finalizing.",
   },
   {
-    icon: "🚀",
-    gradient: "linear-gradient(135deg, #EC4899, #F472B6)",
+    icon: "ON",
+    glyphClass: "g-onb",
     name: "Onboarding Guide",
     description:
       "Personalized day-by-day guidance for new hires, remembers progress across sessions.",
   },
   {
-    icon: "📋",
-    gradient: "linear-gradient(135deg, #EF4444, #F87171)",
+    icon: "CO",
+    glyphClass: "g-con",
     name: "Contract Analyzer",
     description:
       "Extracts risks, key dates and obligations. Flags high-risk clauses for human review.",

@@ -1,21 +1,38 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
-const inter = Inter({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600"],
+  variable: "--font-plex",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
 });
 
 export const metadata: Metadata = {
-  title: "OpsIQ — AI Operations Hub",
+  title: "OpsIQ — Operations Console",
   description: "AI-powered operations hub for internal knowledge, support, and workflows",
+  icons: {
+    icon: "/opsiq-mark.svg",
+    apple: "/opsiq-mark.svg",
+  },
+  openGraph: {
+    title: "OpsIQ — Operations Console",
+    description: "AI-powered operations hub for internal knowledge, support, and workflows",
+    images: [{ url: "/opsiq-mark.svg", width: 96, height: 96, alt: "OpsIQ" }],
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +42,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jakarta.variable}`}>
+      <body
+        className={`${spaceGrotesk.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
+      >
         <AppShell>{children}</AppShell>
       </body>
     </html>
