@@ -1,0 +1,31 @@
+/** Platform + legacy API routes exposed by the OpsIQ backend. */
+export const API_ENDPOINTS = [
+  { method: "GET", path: "/agents", tag: "Platform", description: "Agent catalog with index stats" },
+  { method: "POST", path: "/agents/{agentId}/query", tag: "Platform", description: "RAG query with citations & RAGAS" },
+  { method: "POST", path: "/actions/{actionId}/draft", tag: "Platform", description: "Create gated action draft (report, contract)" },
+  { method: "GET", path: "/approvals/pending", tag: "Platform", description: "List pending approval requests" },
+  { method: "POST", path: "/approvals/{threadId}/approve", tag: "Platform", description: "Approve draft (Idempotency-Key required)" },
+  { method: "POST", path: "/approvals/{threadId}/request-changes", tag: "Platform", description: "Request changes on pending approval" },
+  { method: "GET", path: "/audit/events", tag: "Platform", description: "Guardrail & approval audit trail" },
+  { method: "GET", path: "/telemetry/quality", tag: "Platform", description: "Rolling RAGAS averages (sidebar strip)" },
+  { method: "GET", path: "/telemetry/analytics", tag: "Platform", description: "Analytics dashboard aggregates" },
+  { method: "GET", path: "/config", tag: "Platform", description: "Read-only RAG / guardrail / model config" },
+  { method: "POST", path: "/auth/token", tag: "Auth", description: "Dev JWT login" },
+  { method: "POST", path: "/agent/sessions", tag: "Agents", description: "Create server-issued session" },
+  { method: "GET", path: "/agent/sessions", tag: "Agents", description: "List sessions" },
+  { method: "GET", path: "/agent/sessions/{id}", tag: "Agents", description: "Session detail" },
+  { method: "POST", path: "/agent/chat", tag: "Agents", description: "Legacy chat (use /agents/{id}/query)" },
+  { method: "POST", path: "/ingest", tag: "Ingestion", description: "Upload document to knowledge base" },
+  { method: "POST", path: "/search", tag: "Search", description: "Semantic search" },
+  { method: "POST", path: "/query", tag: "Query", description: "Full RAG pipeline" },
+  { method: "GET", path: "/stats", tag: "Observability", description: "Knowledge base stats" },
+  { method: "GET", path: "/health", tag: "Health", description: "Health check" },
+  { method: "GET", path: "/guardrails/events", tag: "Guardrails", description: "Guardrail events by session" },
+  { method: "GET", path: "/ragas/thresholds", tag: "RAGAS", description: "Quality thresholds" },
+  { method: "GET", path: "/ragas/latest", tag: "RAGAS", description: "Latest evaluation scores" },
+  { method: "GET", path: "/ragas/history", tag: "RAGAS", description: "Evaluation history" },
+  { method: "GET", path: "/ragas/status", tag: "RAGAS", description: "Evaluator status" },
+  { method: "POST", path: "/ragas/evaluate", tag: "RAGAS", description: "Run evaluation" },
+] as const;
+
+export const PLATFORM_ENDPOINTS = API_ENDPOINTS.filter((e) => e.tag === "Platform");

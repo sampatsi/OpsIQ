@@ -1,5 +1,7 @@
 import type {
   AgentQueryResponse,
+  ApprovalRequestRecord,
+  AuditEntry,
   ChatResponse,
   LiveQualityMetrics,
   PlatformConfig,
@@ -200,6 +202,43 @@ export async function requestApprovalChanges(payload: {
     body: JSON.stringify({ sessionId: payload.sessionId, notes: payload.notes }),
   });
   return handleResponse(res);
+}
+
+export async function listPendingApprovals(): Promise<ApprovalRequestRecord[]> {
+  try {
+    const res = await fetch(`${API_BASE}/approvals/pending`);
+    if (!res.ok) return [];
+    return res.json() as Promise<ApprovalRequestRecord[]>;
+  } catch {
+    return [];
+  }
+}
+
+export async function createActionDraft(payload: {
+  actionId: string;
+  sessionId: string;
+  draftPayload?: Record<string, unknown>;
+}): Promise<ApprovalRequestRecord> {
+  const res = await fetch(`${API_BASE}/actions/${payload.actionId}/draft`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sessionId: payload.sessionId,
+      payload: payload.draftPayload ?? {},
+    }),
+  });
+  return handleResponse(res);
+}
+
+export async function getAuditEvents(limit = 50): Promise<AuditEntry[]> {
+  try {
+    const res = await fetch(`${API_BASE}/audit/events?limit=${Math.min(limit, 100)}`);
+    if (!res.ok) return [];
+    const data = (await res.json()) as { events: AuditEntry[] };
+    return data.events ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export async function ingestDocument(formData: FormData): Promise<unknown> {

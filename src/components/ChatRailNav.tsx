@@ -9,6 +9,7 @@ import {
   Clock,
   Home,
   MessageSquare,
+  Network,
   Settings,
   Sparkles,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const LINKS = [
   { href: "/knowledge-base", label: "Knowledge", icon: BookOpen },
   { href: "/sessions", label: "Sessions", icon: Clock },
   { href: "/quality", label: "AI Quality", icon: Sparkles },
+  { href: "/architecture", label: "Architecture", icon: Network },
   { href: "/settings", label: "RAG Settings", icon: Settings },
   { href: "/about", label: "About", icon: CircleHelp },
 ] as const;

@@ -106,6 +106,39 @@
     @apply overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--card)] shadow-design-sm;
   }
 
+  /* Architecture graph — always show horizontal scrollbar track */
+  .architecture-graph-scroll {
+    overflow-x: scroll;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-2) var(--card);
+  }
+
+  .architecture-graph-scroll::-webkit-scrollbar {
+    height: 12px;
+    width: 10px;
+  }
+
+  .architecture-graph-scroll::-webkit-scrollbar-track {
+    background: var(--card);
+    border-top: 1px solid var(--line);
+  }
+
+  .architecture-graph-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--text-2) 55%, var(--line));
+    border-radius: 6px;
+    border: 2px solid var(--card);
+  }
+
+  .architecture-graph-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--text-2);
+  }
+
+  .architecture-graph-scroll::-webkit-scrollbar-corner {
+    background: var(--card);
+  }
+
   .console-table-head {
     @apply bg-[var(--paper)] text-left;
   }

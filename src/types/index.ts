@@ -256,3 +256,25 @@ export interface AnalyticsDashboard {
     faithfulnessThreshold: number;
   };
 }
+
+export interface ApprovalRequestRecord {
+  threadId: string;
+  actionId: string;
+  sessionId: string;
+  status: string;
+  draftPayload: Record<string, unknown>;
+  expiresAt: string;
+  approverId?: string;
+  createdAt?: string;
+}
+
+export interface AuditEntry {
+  auditId: string;
+  userId?: string;
+  agentId?: string;
+  sessionId?: string;
+  action: string;
+  restrictedFields: string[];
+  timestamp: string;
+  detail: Record<string, unknown>;
+}
